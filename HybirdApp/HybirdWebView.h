@@ -48,7 +48,7 @@ typedef void (^completionHander)(id JSResult);
 @property (nonatomic, assign) id<HybirdWebViewDelegate> delegate;
 
 /// 当前加载好的URL
-@property (nonatomic, strong) NSURL *currentURL;
+@property (nonatomic, copy) NSURL *currentURL;
 /// 当前使用的webView实例
 @property (nonatomic, strong) id currentWebView;
 /// 是否使用UIWebView
@@ -56,7 +56,7 @@ typedef void (^completionHander)(id JSResult);
 /// 是否正在loading
 @property (nonatomic, assign, readonly) BOOL isLoading;
 /// 用来同步Cookie的外部接口URL地址
-@property (nonatomic, strong) NSURL *activeCookieURL;
+@property (nonatomic, copy) NSURL *activeCookieURL;
 
 #pragma mark
 #pragma mark - 初始化

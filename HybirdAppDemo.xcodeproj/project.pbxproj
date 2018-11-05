@@ -22,8 +22,8 @@
 		FD1C7380218A9D4B00468CAE /* HybirdInteraction.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C737D218A9D4B00468CAE /* HybirdInteraction.m */; };
 		FD1C7389218A9D7B00468CAE /* UIBarButtonItem+Auxiliary.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C7383218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.m */; };
 		FD1C738A218A9D7B00468CAE /* HybirdWebVC.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C7384218A9D7A00468CAE /* HybirdWebVC.m */; };
-		FD1C738B218A9D7B00468CAE /* JSBridgeInteraction.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C7385218A9D7A00468CAE /* JSBridgeInteraction.m */; };
-		FD1C738E218BE8F800468CAE /* UIDevice+SPComponent.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C738D218BE8F800468CAE /* UIDevice+SPComponent.m */; };
+		FD1C738B218A9D7B00468CAE /* LJHybirdInteraction.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C7385218A9D7A00468CAE /* LJHybirdInteraction.m */; };
+		FD1C738E218BE8F800468CAE /* UIDevice+LJAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C738D218BE8F800468CAE /* UIDevice+LJAdd.m */; };
 		FD1C7390218BE9C300468CAE /* test.html in Resources */ = {isa = PBXBuildFile; fileRef = FD1C738F218BE9C300468CAE /* test.html */; };
 		FD1C7394218C324E00468CAE /* TestViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C7393218C324E00468CAE /* TestViewController.m */; };
 		FD1C7397218C34EA00468CAE /* config.js in Resources */ = {isa = PBXBuildFile; fileRef = FD1C7395218C34EA00468CAE /* config.js */; };
@@ -31,6 +31,8 @@
 		FD1C739A218C34FF00468CAE /* test.js in Resources */ = {isa = PBXBuildFile; fileRef = FD1C7399218C34FF00468CAE /* test.js */; };
 		FD1C739C218C361400468CAE /* 业务层的interaction子类方法.jpg in Resources */ = {isa = PBXBuildFile; fileRef = FD1C739B218C361400468CAE /* 业务层的interaction子类方法.jpg */; };
 		FD1C739E218C367800468CAE /* readme.pdf in Resources */ = {isa = PBXBuildFile; fileRef = FD1C739D218C367800468CAE /* readme.pdf */; };
+		FD1C73AA218FFC4400468CAE /* hybird.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FD1C73A9218FFC4400468CAE /* hybird.bundle */; };
+		FD1C73AD2190170A00468CAE /* LJHybirdWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD1C73AC2190170A00468CAE /* LJHybirdWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,15 +83,14 @@
 		FD1C737A218A9D4B00468CAE /* HybirdWebView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybirdWebView.h; sourceTree = "<group>"; };
 		FD1C737B218A9D4B00468CAE /* HybirdApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybirdApp.h; sourceTree = "<group>"; };
 		FD1C737D218A9D4B00468CAE /* HybirdInteraction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HybirdInteraction.m; sourceTree = "<group>"; };
-		FD1C7382218A9D7A00468CAE /* JSBridgeInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBridgeInteraction.h; sourceTree = "<group>"; };
+		FD1C7382218A9D7A00468CAE /* LJHybirdInteraction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJHybirdInteraction.h; sourceTree = "<group>"; };
 		FD1C7383218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIBarButtonItem+Auxiliary.m"; sourceTree = "<group>"; };
 		FD1C7384218A9D7A00468CAE /* HybirdWebVC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HybirdWebVC.m; sourceTree = "<group>"; };
-		FD1C7385218A9D7A00468CAE /* JSBridgeInteraction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSBridgeInteraction.m; sourceTree = "<group>"; };
+		FD1C7385218A9D7A00468CAE /* LJHybirdInteraction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJHybirdInteraction.m; sourceTree = "<group>"; };
 		FD1C7386218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIBarButtonItem+Auxiliary.h"; sourceTree = "<group>"; };
 		FD1C7387218A9D7B00468CAE /* HybirdWebVC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HybirdWebVC.h; sourceTree = "<group>"; };
-		FD1C7388218A9D7B00468CAE /* JSBridgeWebConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBridgeWebConfig.h; sourceTree = "<group>"; };
-		FD1C738C218BE8F800468CAE /* UIDevice+SPComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+SPComponent.h"; sourceTree = "<group>"; };
-		FD1C738D218BE8F800468CAE /* UIDevice+SPComponent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+SPComponent.m"; sourceTree = "<group>"; };
+		FD1C738C218BE8F800468CAE /* UIDevice+LJAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIDevice+LJAdd.h"; sourceTree = "<group>"; };
+		FD1C738D218BE8F800468CAE /* UIDevice+LJAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIDevice+LJAdd.m"; sourceTree = "<group>"; };
 		FD1C738F218BE9C300468CAE /* test.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = test.html; sourceTree = "<group>"; };
 		FD1C7392218C324E00468CAE /* TestViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestViewController.h; sourceTree = "<group>"; };
 		FD1C7393218C324E00468CAE /* TestViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestViewController.m; sourceTree = "<group>"; };
@@ -98,6 +99,9 @@
 		FD1C7399218C34FF00468CAE /* test.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = test.js; sourceTree = "<group>"; };
 		FD1C739B218C361400468CAE /* 业务层的interaction子类方法.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "业务层的interaction子类方法.jpg"; sourceTree = "<group>"; };
 		FD1C739D218C367800468CAE /* readme.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = readme.pdf; sourceTree = "<group>"; };
+		FD1C73A9218FFC4400468CAE /* hybird.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = hybird.bundle; sourceTree = "<group>"; };
+		FD1C73AB2190170A00468CAE /* LJHybirdWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LJHybirdWebViewController.h; sourceTree = "<group>"; };
+		FD1C73AC2190170A00468CAE /* LJHybirdWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LJHybirdWebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -220,6 +224,9 @@
 				FD1C7377218A9D4B00468CAE /* HybirdWebView.m */,
 				FD1C7387218A9D7B00468CAE /* HybirdWebVC.h */,
 				FD1C7384218A9D7A00468CAE /* HybirdWebVC.m */,
+				FD1C7386218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.h */,
+				FD1C7383218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.m */,
+				FD1C73A9218FFC4400468CAE /* hybird.bundle */,
 			);
 			path = HybirdApp;
 			sourceTree = "<group>";
@@ -228,13 +235,12 @@
 			isa = PBXGroup;
 			children = (
 				FD1C7391218C31BB00468CAE /* DetailDemo(OC\JS\readme) */,
-				FD1C7388218A9D7B00468CAE /* JSBridgeWebConfig.h */,
-				FD1C7382218A9D7A00468CAE /* JSBridgeInteraction.h */,
-				FD1C7385218A9D7A00468CAE /* JSBridgeInteraction.m */,
-				FD1C7386218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.h */,
-				FD1C7383218A9D7A00468CAE /* UIBarButtonItem+Auxiliary.m */,
-				FD1C738C218BE8F800468CAE /* UIDevice+SPComponent.h */,
-				FD1C738D218BE8F800468CAE /* UIDevice+SPComponent.m */,
+				FD1C7382218A9D7A00468CAE /* LJHybirdInteraction.h */,
+				FD1C7385218A9D7A00468CAE /* LJHybirdInteraction.m */,
+				FD1C73AB2190170A00468CAE /* LJHybirdWebViewController.h */,
+				FD1C73AC2190170A00468CAE /* LJHybirdWebViewController.m */,
+				FD1C738C218BE8F800468CAE /* UIDevice+LJAdd.h */,
+				FD1C738D218BE8F800468CAE /* UIDevice+LJAdd.m */,
 				FD1C7392218C324E00468CAE /* TestViewController.h */,
 				FD1C7393218C324E00468CAE /* TestViewController.m */,
 			);
@@ -363,6 +369,7 @@
 				FD1C7309218A9CB000468CAE /* LaunchScreen.storyboard in Resources */,
 				FD1C7390218BE9C300468CAE /* test.html in Resources */,
 				FD1C7306218A9CB000468CAE /* Assets.xcassets in Resources */,
+				FD1C73AA218FFC4400468CAE /* hybird.bundle in Resources */,
 				FD1C739E218C367800468CAE /* readme.pdf in Resources */,
 				FD1C7398218C34EA00468CAE /* interaction.js in Resources */,
 				FD1C7397218C34EA00468CAE /* config.js in Resources */,
@@ -454,11 +461,12 @@
 				FD1C7380218A9D4B00468CAE /* HybirdInteraction.m in Sources */,
 				FD1C738A218A9D7B00468CAE /* HybirdWebVC.m in Sources */,
 				FD1C730C218A9CB000468CAE /* main.m in Sources */,
+				FD1C73AD2190170A00468CAE /* LJHybirdWebViewController.m in Sources */,
 				FD1C7389218A9D7B00468CAE /* UIBarButtonItem+Auxiliary.m in Sources */,
-				FD1C738B218A9D7B00468CAE /* JSBridgeInteraction.m in Sources */,
+				FD1C738B218A9D7B00468CAE /* LJHybirdInteraction.m in Sources */,
 				FD1C7394218C324E00468CAE /* TestViewController.m in Sources */,
 				FD1C72FE218A9CAF00468CAE /* AppDelegate.m in Sources */,
-				FD1C738E218BE8F800468CAE /* UIDevice+SPComponent.m in Sources */,
+				FD1C738E218BE8F800468CAE /* UIDevice+LJAdd.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

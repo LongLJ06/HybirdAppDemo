@@ -7,7 +7,8 @@
 //
 
 #import "ViewController.h"
-#import "HybirdWebVC.h"
+#import "LJHybirdWebViewController.h"
+#import "LJHybirdInteraction.h"
 
 @interface ViewController ()
 
@@ -23,9 +24,10 @@
 }
 
 - (void)jumpClick {
-    HybirdWebVC *VC = [[HybirdWebVC alloc] init];
-//    VC.hidesBottomBarWhenPushed = YES;
-//    VC.webURL = @"https://www.baidu.com";
+    LJHybirdWebViewController *VC = [[LJHybirdWebViewController alloc] init];
+    LJHybirdInteraction *interaction = [[LJHybirdInteraction alloc] init];
+    interaction.currentVC = VC;
+    VC.interactionSubject = interaction;
     NSURL *fileUrl = [[NSBundle mainBundle] URLForResource:@"test.html" withExtension:nil];
     NSString *str = [NSString stringWithContentsOfURL:fileUrl encoding:NSUTF8StringEncoding error:nil];
     [VC loadHTMLString:str baseURL:nil];

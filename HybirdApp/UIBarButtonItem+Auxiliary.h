@@ -10,6 +10,6 @@
 #import <Foundation/Foundation.h>
 
 @interface UIBarButtonItem (Auxiliary)
-@property (nonatomic ,strong)NSObject *auxiliaryObject;
+@property (nonatomic, strong) NSObject *auxiliaryObject;
 @end
 

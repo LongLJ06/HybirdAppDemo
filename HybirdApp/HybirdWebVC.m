@@ -7,14 +7,39 @@
 //
 
 #import "HybirdWebVC.h"
-#import "JSBridgeInteraction.h"
-#import "JSBridgeWebConfig.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 #import <Masonry/Masonry.h>
-#import "UIBarButtonItem+Auxiliary.h"
+#import "HybirdInteraction.h"
 #import "HybirdWebView.h"
+#import "UIBarButtonItem+Auxiliary.h"
 
 #define IOS9_OR_LATER ([[[UIDevice currentDevice] systemVersion] integerValue] >= 9)
+
+#pragma mark 默认的App调用Web相关
+// 返回事件
+static NSString * const WebTriggerGoBack                = @"WAP.trigger('goBack')";
+// 加载完成通知WAP事件
+static NSString * const WebTriggerLoaded                = @"WAP.trigger('loaded')";
+// 双按钮时无参数关闭Web事件
+static NSString * const WebTriggerCloseEvent            = @"WAP.trigger('closeEvent')";
+// 双按钮时带参数关闭Web事件
+static NSString * const WebTriggerCloseEventWithArge    = @"WAP.trigger('closeEvent','%@')";
+// 无参数副标题点击事件
+static NSString * const WebTriggerSubTitleEvent         = @"WAP.trigger('subTitleEvent')";
+// 带参数副标题点击事件
+static NSString * const WebTriggerSubTitleEventWithArge = @"WAP.trigger('subTitleEvent','%@')";
+
+#pragma mark Web调用App主交互函数
+// web从app获取数据
+static NSString * const AppMainInteractionGetData           = @"getData";
+// web向app推送数据
+static NSString * const AppMainInteractionPutData           = @"putData";
+// web指定app的动作，比如分享
+static NSString * const AppMainInteractionDoAction          = @"doAction";
+// web跳转到app的原生页面
+static NSString * const AppMainInteractionGoToNative        = @"goToNative";
+// 额外的多参数自适应交互行为，方便上线后临时的交互
+static NSString * const AppMainInteractionGoToExtraNative   = @"goToExtraNative";
 
 typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     HybirdBackItemStyleBack,        // 返回按钮为箭头模式
@@ -27,13 +52,11 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                             HybirdWebViewInteractionDelegate>
 /// webView的主体
 @property (nonatomic, strong) HybirdWebView *hybirdWebView;
-/// webView交互的自定义方法主体
-@property (nonatomic, strong) JSBridgeInteraction *interactionSubject;
 /// 返回按钮模式
 @property (nonatomic, assign) HybirdBackItemStyle style;
 /// 加载HTML专用属性
-@property (nonatomic, strong) NSString *HTMLString;
-@property (nonatomic, strong) NSURL *baseURL;
+@property (nonatomic, copy) NSString *HTMLString;
+@property (nonatomic, copy) NSURL *baseURL;
 @end
 
 @implementation HybirdWebVC
@@ -50,7 +73,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
 }
 
 #pragma mark
-#pragma mark - 子类自定义方法(必须实现)
+#pragma mark - 子类自定义方法(建议实现)
 - (NSString *)packageBridgeURL:(NSString *)webURLString
 {
     return webURLString;
@@ -60,24 +83,14 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
 {
     return nil;
 }
+- (NSDictionary *)subTitleBarItemAttributeHighlighted
+{
+    return nil;
+}
 
 
 #pragma mark
 #pragma mark - Get/Set
-- (void)setNavigationBarHidden:(BOOL)navigationBarHidden
-{
-    _navigationBarHidden = navigationBarHidden;
-    //隐藏导航栏
-    if (navigationBarHidden) {
-        if (@available(iOS 11.0, *)) {
-            WKWebView *webView = (WKWebView *)self.hybirdWebView.currentWebView;
-            webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        }else{
-            self.edgesForExtendedLayout = UIRectEdgeNone;
-        }
-    }
-    [self.navigationController setNavigationBarHidden:navigationBarHidden animated:NO];
-}
 
 #pragma mark
 #pragma mark - ViewLife
@@ -89,14 +102,36 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     self.view = rootView;
 }
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        // initialization
+        self.URLEncodeType = HybirdURLEncodeTypeNone;
+        self.isRefresh = YES;
+        self.isRefreshCurrentURL = NO;
+        self.usingWebKitCore = YES;
+        self.navigationBarHidden = NO;
+        self.naviBarBackImageName = @"nav_bar_back";
+        self.naviBarCloseImageName = @"nav_bar_close";
+        self.WebGoBack = WebTriggerGoBack;
+        self.WebLoaded = WebTriggerLoaded;
+        self.WebCloseEvent = WebTriggerCloseEvent;
+        self.WebCloseEventWithArge = WebTriggerCloseEventWithArge;
+        self.WebSubTitleEvent = WebTriggerSubTitleEvent;
+        self.WebSubTitleEventWithArge = WebTriggerSubTitleEventWithArge;
+        self.mainInteractionArr = @[AppMainInteractionGetData,
+                                    AppMainInteractionPutData,
+                                    AppMainInteractionDoAction,
+                                    AppMainInteractionGoToNative,
+                                    AppMainInteractionGoToExtraNative];
+    }
+    return self;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    self.URLEncodeType = HybirdURLEncodeTypeNone;
-    self.isRefresh = YES;
-    self.isRefreshCurrentURL = NO;
-    self.usingWebKitCore = YES;
-    _navigationBarHidden = NO;
 
     [self layoutCreatWebView];
 
@@ -116,7 +151,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     [super viewWillAppear:animated];
     
     [self.navigationController setToolbarHidden:YES animated:YES];
-    [self setNavigationBarHidden:self.navigationBarHidden];
+    [self setNavigationBar:self.navigationBarHidden];
     
     if (self.isRefresh) {
         self.isRefresh = NO;
@@ -155,9 +190,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     self.hybirdWebView = webView;
     [self.view addSubview:webView];
     [webView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.left.equalTo(self.view);
-        make.top.equalTo(self.view);
-        make.size.equalTo(self.view);
+        make.edges.equalTo(self.view);
     }];
 }
 
@@ -210,12 +243,27 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     return refreshURL;
 }
 
+- (void)setNavigationBar:(BOOL)navigationBarHidden
+{
+    _navigationBarHidden = navigationBarHidden;
+    //隐藏导航栏
+    if (navigationBarHidden) {
+        if (@available(iOS 11.0, *)) {
+            WKWebView *webView = (WKWebView *)self.hybirdWebView.currentWebView;
+            webView.scrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        }else{
+            self.edgesForExtendedLayout = UIRectEdgeNone;
+        }
+    }
+    [self.navigationController setNavigationBarHidden:navigationBarHidden animated:NO];
+}
+
 - (UIBarButtonItem *)backBarItem
 {
     UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
     backBtn.frame = CGRectMake(0, 0, 24, 44);
     backBtn.imageEdgeInsets = UIEdgeInsetsMake(13.0 , 0.0 , 13.0 , 13);
-    [backBtn setImage:[UIImage imageNamed:JSBridgeNavBackBarImage]
+    [backBtn setImage:[UIImage imageNamed:self.naviBarBackImageName]
              forState:UIControlStateNormal];
     [backBtn addTarget:self
                 action:@selector(backClicked:)
@@ -232,7 +280,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                                                                   target:self
                                                                   action:@selector(closeClicked:)];
     closeItem.imageInsets = UIEdgeInsetsMake(0, 0, 0, 0);
-    [closeItem setImage:[[UIImage imageNamed:JSBridgeNavCloseBarImage]
+    [closeItem setImage:[[UIImage imageNamed:self.naviBarCloseImageName]
                       imageWithRenderingMode:UIImageRenderingModeAlwaysOriginal]];
     return closeItem;
 }
@@ -253,7 +301,10 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                 [barItem setTitleTextAttributes:[self subTitleBarItemAttribute]
                                        forState:UIControlStateNormal];
             }
-            
+            if ([self subTitleBarItemAttributeHighlighted]) {
+                [barItem setTitleTextAttributes:[self subTitleBarItemAttributeHighlighted]
+                                       forState:UIControlStateHighlighted];
+            }
         }else if ([itemTitle isKindOfClass:[UIImage class]]){
             barItem = [[UIBarButtonItem alloc] initWithTitle:nil
                                                        style:UIBarButtonItemStylePlain
@@ -352,7 +403,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
     if (self.hybirdWebView.isLoading) {
         [self.navigationController popViewControllerAnimated:YES];
     }else{
-        [self.hybirdWebView evaluateWebJavaScript:JSBridgeTriggerGoBack
+        [self.hybirdWebView evaluateWebJavaScript:self.WebGoBack
                                      evaluateType:HybirdWebEvaluateTypeJSContext
                                        completion:^(id JSResult) {
                                            if ([JSResult isEqual:[NSNull null]]) {
@@ -378,10 +429,10 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                                                                               error:nil];
                 NSString *auxiliaryJSONString = [[NSString alloc] initWithData:auxiliaryJSONData encoding:NSUTF8StringEncoding];
                 auxiliaryJSONString = [auxiliaryJSONString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-                goCloseEventText = [NSString stringWithFormat:JSBridgeTriggerCloseEventWithArge,auxiliaryJSONString];
+                goCloseEventText = [NSString stringWithFormat:self.WebCloseEventWithArge, auxiliaryJSONString];
             }
         }else{
-            goCloseEventText = [NSString stringWithFormat:JSBridgeTriggerCloseEvent];
+            goCloseEventText = [NSString stringWithFormat:@"%@", self.WebCloseEvent];
         }
 
         [self.hybirdWebView evaluateWebJavaScript:goCloseEventText
@@ -404,10 +455,10 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                                                                           error:nil];
             NSString *auxiliaryJSONString = [[NSString alloc] initWithData:auxiliaryJSONData encoding:NSUTF8StringEncoding];
             auxiliaryJSONString = [auxiliaryJSONString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-            subTitleEventText = [NSString stringWithFormat:JSBridgeTriggerSubTitleEventWithArge,auxiliaryJSONString];
+            subTitleEventText = [NSString stringWithFormat:self.WebSubTitleEventWithArge, auxiliaryJSONString];
         }
     }else{
-        subTitleEventText = [NSString stringWithFormat:JSBridgeTriggerSubTitleEvent];
+        subTitleEventText = [NSString stringWithFormat:@"%@", self.WebSubTitleEvent];
     }
 
     [self.hybirdWebView evaluateWebJavaScript:subTitleEventText
@@ -419,7 +470,11 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
 #pragma mark - HybirdWebViewDelegate
 - (void)hybirdWebView:(HybirdWebView *)webView didFinishLoadingURL:(NSURL *)URL
 {
-    [self evaluateWebJavaScript:JSBridgeTriggerLoaded];
+    [self evaluateWebJavaScript:self.WebLoaded];
+    
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(hybirdWebVC:didFinishLoadingURL:)]) {
+        [self.delegate hybirdWebVC:webView didFinishLoadingURL:URL];
+    }
 }
 
 - (void)hybirdWebView:(HybirdWebView *)webView didStartLoadingURL:(NSURL *)URL
@@ -430,6 +485,16 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
             [telWebView loadRequest:[NSURLRequest requestWithURL:URL]];
             [self.view addSubview:telWebView];
         }
+    }
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(hybirdWebVC:didStartLoadingURL:)]) {
+        [self.delegate hybirdWebVC:webView didStartLoadingURL:URL];
+    }
+}
+
+- (void)hybirdWebView:(HybirdWebView *)webView didFailToLoadURL:(NSURL *)URL error:(NSError *)error
+{
+    if (self.delegate != nil && [self.delegate respondsToSelector:@selector(hybirdWebVC:didFailToLoadURL:error:)]) {
+        [self.delegate hybirdWebVC:webView didFailToLoadURL:URL error:error];
     }
 }
 
@@ -442,19 +507,11 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
         if (hybirdContext != nil) {
             __weak typeof(self) weakSelf = self;
             if (weakSelf.interactionSubject == nil) {
-                JSBridgeInteraction *interaction = [[JSBridgeInteraction alloc] init];
+                HybirdInteraction *interaction = [[HybirdInteraction alloc] init];
                 interaction.currentVC = weakSelf;
                 weakSelf.interactionSubject = interaction;
             }
-
-            NSMutableArray *interactionList = [[NSMutableArray alloc] initWithCapacity:0];
-            [interactionList addObject:JSBridgeInteractionGetData];
-            [interactionList addObject:JSBridgeInteractionPutData];
-            [interactionList addObject:JSBridgeInteractionGoToNative];
-            [interactionList addObject:JSBridgeInteractionDoAction];
-            [interactionList addObject:JSBridgeInteractionGoToExtraNative];
-
-            [weakSelf.interactionSubject executeInteractionForSELList:interactionList
+            [weakSelf.interactionSubject executeInteractionForSELList:_mainInteractionArr
                                                           toJSContext:hybirdContext];
         }
     }
@@ -464,8 +521,11 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
 {
     if (self.isUseInteraction) {
         if (message != nil) {
-            JSBridgeInteraction *interaction = [[JSBridgeInteraction alloc] init];
-            interaction.currentVC = self;
+            if (self.interactionSubject == nil) {
+                HybirdInteraction *interaction = [[HybirdInteraction alloc] init];
+                interaction.currentVC = self;
+                self.interactionSubject = interaction;
+            }
 
             NSString *selName;
             NSObject *paramters;
@@ -476,7 +536,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
                 selName = message.name;
                 paramters = nil;
             }
-            [interaction executeInteractionForSELName:selName
+            [self.interactionSubject executeInteractionForSELName:selName
                                            parameters:paramters];
         }
     }
@@ -485,13 +545,7 @@ typedef NS_ENUM(NSInteger ,HybirdBackItemStyle) {
 - (NSArray *)hybirdWebViewDidRegisterWKScriptMessageName:(HybirdWebView *)webView
 {
     if (self.isUseInteraction) {
-        NSMutableArray *interactionList = [[NSMutableArray alloc] initWithCapacity:0];
-        [interactionList addObject:JSBridgeInteractionGetData];
-        [interactionList addObject:JSBridgeInteractionPutData];
-        [interactionList addObject:JSBridgeInteractionGoToNative];
-        [interactionList addObject:JSBridgeInteractionDoAction];
-        [interactionList addObject:JSBridgeInteractionGoToExtraNative];
-        return interactionList;
+        return _mainInteractionArr;
     }
     return nil;
 }

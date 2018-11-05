@@ -8,7 +8,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface UIDevice(SPComponent)
+@interface UIDevice(LJAdd)
 //获取MAC地址
 + (NSString *)macAddress;
 

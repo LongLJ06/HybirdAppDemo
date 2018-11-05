@@ -9,12 +9,12 @@
 
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <UIKit/UIKit.h>
+@class HybirdWebVC;
 
 @interface HybirdInteraction : NSObject
 
 //当前Web所在的视图控制器
-@property (nonatomic, weak) UIViewController *currentVC;
+@property (nonatomic, weak) HybirdWebVC *currentVC;
 
 /**
  执行交互动作

@@ -1,11 +1,11 @@
 //
-//  UIDevice+SPComponent.m
+//  UIDevice+LJAdd.m
 //  AFNetworking
 //
 //  Created by long on 2017/4/24.
 //
 
-#import "UIDevice+SPComponent.h"
+#import "UIDevice+LJAdd.h"
 #import <sys/socket.h>
 #import <sys/sysctl.h>
 #import <sys/types.h>
@@ -13,7 +13,7 @@
 #import <net/if_dl.h>
 #import <AdSupport/AdSupport.h>
 
-@implementation UIDevice(SPComponent)
+@implementation UIDevice(LJAdd)
 //获取MAC地址
 + (NSString *)macAddress
 {

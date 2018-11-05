@@ -1,68 +1,26 @@
 //
-//  HybirdWebInteraction.m
+//  LJHybirdInteraction.m
 //  HybirdApp
 //
 //  Created by long on 2017/7/28.
 //  Copyright © 2017年 LongLJ. All rights reserved.
 //
 
-#import "JSBridgeInteraction.h"
+#import "LJHybirdInteraction.h"
 #import "HybirdWebVC.h"
 #import "UIBarButtonItem+Auxiliary.h"
-#import "UIDevice+SPComponent.h"
+#import "UIDevice+LJAdd.h"
 #import <objc/runtime.h>
 #import <SDWebImage/SDWebImageManager.h>
 #import "TestViewController.h"
 
-@interface JSBridgeInteraction()
+#define JS_OC_INTERACTION_USE_WEBKIT            @"1"
+#define JS_OC_INTERACTION_USE_JAVASCRIPTCORE    @"0"
+
+@interface LJHybirdInteraction()
 @end
 
-@implementation JSBridgeInteraction
-
-#pragma mark
-#pragma mark - APP和WAP交互的基本4大方法
-//H5 从 Native 获取数据(第一参数为具体执行的方法的方法名, 第二参数为传给app的数据，第三参数为回调函数)
-- (void)getData:(NSArray *)arges
-{
-    [self handleJSAction:arges];
-}
-
-//H5告诉Native APP一些数据(第一参数为具体执行的方法的方法名, 第二参数传给app的数据)
-- (void)putData:(NSArray *)arges
-{
-    [self handleJSAction:arges];
-}
-
-//H5调用Native页面(第一参数为具体执行的方法的方法名, 第二参数传给app的数据)
-- (void)goToNative:(NSArray *)arges
-{
-    [self handleJSAction:arges];
-}
-
-//调用app的功能，引起页面变化(第一参数为具体执行的方法的方法名, 第二参数传给app的数据)
-- (void)doAction:(NSArray *)arges
-{
-    [self handleJSAction:arges];
-}
-
-
-- (void)handleJSAction:(NSArray *)arges
-{
-    if (arges != nil && [arges count] > 0) {
-        NSString *selName = [arges objectAtIndex:0];
-        NSMutableArray *paramters = [[NSMutableArray alloc] initWithCapacity:0];
-        if ([arges count] > 1) {
-            NSInteger cnt = [arges count];
-            for (int i=1; i<cnt; i++) {
-                [paramters addObject:[arges objectAtIndex:i]];
-            }
-            selName = [NSString stringWithFormat:@"%@:",selName];
-        }else{
-            paramters = nil;
-        }
-        [self executeInteractionForSELName:selName parameters:paramters];
-    }
-}
+@implementation LJHybirdInteraction
 
 #pragma mark
 #pragma mark - 泛型跳转原生页面
@@ -268,7 +226,7 @@
 }
 
 #pragma mark
-#pragma mark - wap与活动站互跳方法(新开webView)
+#pragma mark - web与活动站互跳方法(新开webView)
 - (void)openWindow:(NSArray *)arges
 {
     if (arges.count != 0) {
@@ -277,7 +235,6 @@
         if (urlStr != nil) {
             HybirdWebVC *VC = [[HybirdWebVC alloc]init];
             VC.webURL = urlStr;
-            VC.hidesBottomBarWhenPushed = YES;
             [self.currentVC.navigationController pushViewController:VC animated:YES];
         }
     }

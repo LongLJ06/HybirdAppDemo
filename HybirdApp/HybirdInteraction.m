@@ -7,14 +7,37 @@
 //
 
 #import "HybirdInteraction.h"
+#import "HybirdWebVC.h"
 
 @implementation HybirdInteraction
+
+- (void)handleJSAction:(NSArray *)arges
+{
+    if (arges != nil && [arges count] > 0) {
+        NSString *selName = [arges objectAtIndex:0];
+        NSMutableArray *paramters = [[NSMutableArray alloc] initWithCapacity:0];
+        if ([arges count] > 1) {
+            NSInteger cnt = [arges count];
+            for (int i=1; i<cnt; i++) {
+                [paramters addObject:[arges objectAtIndex:i]];
+            }
+            selName = [NSString stringWithFormat:@"%@:",selName];
+        }else{
+            paramters = nil;
+        }
+        [self executeInteractionForSELName:selName parameters:paramters];
+    }
+}
 
 #pragma mark
 #pragma mark - 混合交互的基本方法
 - (void)executeInteractionForSELName:(NSString *)selName parameters:(NSObject *)parameters
 {
-    if (selName != nil && ![selName isEqualToString:@""]) {
+    if (!selName.length) {
+        return;
+    }
+    
+    BOOL (^executeBlock)(NSString *, NSObject *) = ^BOOL(NSString *selName, NSObject *parameters) {
         SEL sel = NSSelectorFromString(selName);
         NSMethodSignature *methodSignature = [self methodSignatureForSelector:sel];
         if (methodSignature) {
@@ -32,6 +55,16 @@
             }
             [invocation invoke];
         }
+        return methodSignature;
+    };
+    
+    NSString *mainInteraction = [selName substringToIndex:selName.length-1];
+    if ([self.currentVC.mainInteractionArr containsObject:mainInteraction]) {
+        if (!executeBlock(selName, parameters)) {
+            [self handleJSAction:(NSArray *)parameters];
+        }
+    }else {
+        executeBlock(selName, parameters);
     }
 }
 
