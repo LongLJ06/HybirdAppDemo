@@ -32,4 +32,4 @@ LongLJ：xiaolonglj@gmail.com
 
 ## License
 
-MXRouter is available under the MIT license. See the LICENSE file for more info.
+HybirdAppDemo is available under the MIT license. See the LICENSE file for more info.
